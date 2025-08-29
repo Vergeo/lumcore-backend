@@ -1,3 +1,7 @@
-const allowedOrigins = ["http://localhost:3500/", "http://localhost:5173"];
+const allowedOrigins = [
+	"http://localhost:3500/",
+	"http://localhost:5173",
+	"https://lumcore.onrender.com",
+];
 
 module.exports = allowedOrigins;
