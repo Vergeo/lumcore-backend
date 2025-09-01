@@ -7,8 +7,8 @@ const corsOptions = {
 			callback(new Error("Not allowed by CORS!"));
 		}
 	},
-	credential: true,
-	optionSuccessStatus: 200,
+	credentials: true,
+	optionsSuccessStatus: 200,
 };
 
 module.exports = corsOptions;

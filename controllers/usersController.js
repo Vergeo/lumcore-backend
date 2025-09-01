@@ -52,24 +52,6 @@ const createNewUser = asyncHandler(async (req, res) => {
 	}
 });
 
-const authUser = asyncHandler(async (req, res) => {
-	const { username, password } = req.body;
-	// return res.json({ username, password });
-	const user = await Users.findOne({ username }).exec();
-	// const duplicate = await Users.findOne({ username }).lean().exec();
-	// return res.json(user);
-	if (!user) {
-		return res.json(false);
-	}
-
-	const match = await bcrypt.compare(password, user.password);
-	if (match) {
-		res.json(true);
-	} else {
-		res.json(false);
-	}
-});
-
 // @desc Update a user
 // @route PATCH /users
 // @access Private
@@ -146,5 +128,4 @@ module.exports = {
 	createNewUser,
 	updateUser,
 	deleteUser,
-	authUser,
 };
