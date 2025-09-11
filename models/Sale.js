@@ -9,6 +9,19 @@ const saleSchema = new mongoose.Schema(
 		tableNumber: {
 			type: String,
 		},
+		cashier: {
+			type: String,
+			required: true,
+			ref: "User",
+		},
+		status: {
+			type: String,
+			required: true,
+		},
+		type: {
+			type: String,
+			required: true,
+		},
 		items: [
 			{
 				name: {
@@ -30,15 +43,6 @@ const saleSchema = new mongoose.Schema(
 				],
 			},
 		],
-		cashierId: {
-			type: mongoose.Schema.Types.ObjectId,
-			required: true,
-			ref: "User",
-		},
-		status: {
-			type: String,
-			required: true,
-		},
 		date: {
 			type: Date,
 			required: true,

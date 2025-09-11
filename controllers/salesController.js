@@ -4,7 +4,6 @@ const asyncHandler = require("express-async-handler");
 
 const getAllSales = asyncHandler(async (req, res) => {
 	const sales = await Sale.find().lean();
-
 	res.json(sales);
 });
 
@@ -25,7 +24,8 @@ const getSale = asyncHandler(async (req, res) => {
 });
 
 const createSale = asyncHandler(async (req, res) => {
-	const { number, tableNumber, items, cashierId, status, date } = req.body;
+	const { number, tableNumber, items, cashierId, status, date, type } =
+		req.body;
 
 	if (
 		!number ||
@@ -34,12 +34,21 @@ const createSale = asyncHandler(async (req, res) => {
 		!items.length ||
 		!cashierId ||
 		!status ||
-		!date
+		!date ||
+		!type
 	) {
 		return res.status(400).json({ message: "All fields are required." });
 	}
 
-	const saleObject = { number, tableNumber, items, cashierId, status, date };
+	const saleObject = {
+		number,
+		tableNumber,
+		cashierId,
+		status,
+		date,
+		type,
+		items,
+	};
 	const newSale = await Sale.create(saleObject);
 
 	if (newSale) {
@@ -52,7 +61,7 @@ const createSale = asyncHandler(async (req, res) => {
 });
 
 const updateSale = asyncHandler(async (req, res) => {
-	const { id, number, tableNumber, items, cashierId, status, date } =
+	const { id, number, tableNumber, items, cashierId, status, date, type } =
 		req.body;
 
 	if (
@@ -63,7 +72,8 @@ const updateSale = asyncHandler(async (req, res) => {
 		!items.length ||
 		!cashierId ||
 		!status ||
-		!date
+		!date ||
+		!type
 	) {
 		return res.status(400).json({ message: "All fields are required." });
 	}
@@ -77,6 +87,7 @@ const updateSale = asyncHandler(async (req, res) => {
 	sale.items = items;
 	sale.status = status;
 	sale.tableNumber = tableNumber;
+	sale.type = type;
 
 	const updatedSale = await sale.save();
 

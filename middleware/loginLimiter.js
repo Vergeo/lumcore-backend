@@ -2,10 +2,10 @@ const rateLimit = require("express-rate-limit");
 const { logEvents } = require("./logger");
 
 const loginLimiter = rateLimit({
-	windowMs: 60 * 1000,
-	max: 5,
+	windowMs: 30 * 1000,
+	max: 10,
 	message: {
-		message: "Too many logins, please try again",
+		message: "Terlalu banyak percobaan. Mohon dicoba lagi nanti.",
 	},
 	handler: (req, res, next, option) => {
 		logEvents(

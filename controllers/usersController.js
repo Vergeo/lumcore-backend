@@ -1,90 +1,91 @@
-const Users = require("../models/User");
 const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
-const User = require("../models/User");
+const Users = require("../models/User");
 
-// @desc Get all users
-// @route GET /users
-// @access Private
 const getAllUsers = asyncHandler(async (req, res) => {
-	const users = await Users.find().select("-password").lean();
+	const users = await Users.find().select("-password").lean(); // lean() is used when you don't need to save data
 
 	if (!users?.length) {
-		return res.status(400).json({ message: "No users found" });
+		return res
+			.status(400)
+			.json({ message: "Bad Request: No users found." });
 	}
 
 	res.json(users);
 });
 
-// @desc Create new user
-// @route POST /users
-// @access Private
 const createNewUser = asyncHandler(async (req, res) => {
 	const { username, password, roles } = req.body;
 
-	// Confirm data
-	if (!username || !password || !Array.isArray(roles) || !roles.length) {
-		return res.status(400).json({ message: "All fields are required" });
+	if (!username) {
+		return res
+			.status(400)
+			.json({ message: "Bad Request: Username is required." });
+	} else if (!password) {
+		return res
+			.status(400)
+			.json({ message: "Bad Request: Password is required." });
+	} else if (!Array.isArray(roles) || !roles.length) {
+		return res.status(400).json({
+			message: "Bad Request: Role(s) is required or Role(s) is invalid.",
+		});
 	}
 
-	const duplicate = await Users.findOne({ username }).lean().exec();
+	const duplicate = await Users.findOne({ username }).lean().exec(); // exec() is used when passing arguments
 
 	if (duplicate) {
-		return res.status(409).json({ message: "Duplicate username" });
+		return res.status(409).json({
+			message: `Conflict: User '${username}' has already existed.`,
+		});
 	}
 
-	// Hash password
 	const hashedPassword = await bcrypt.hash(password, 10);
-
 	const userObject = { username, password: hashedPassword, roles };
 
-	// Create and store new user
 	const user = await Users.create(userObject);
 
 	if (user) {
 		res.status(201).json({
-			message: `New use ${username} is successfully created!`,
+			message: `Created: New user '${username}' is successfully created.`,
 		});
 	} else {
 		res.status(400).json({
-			message: "Invalid user data received",
+			message: "Bad Request: User data is invalid.",
 		});
 	}
 });
 
-// @desc Update a user
-// @route PATCH /users
-// @access Private
 const updateUser = asyncHandler(async (req, res) => {
 	const { id, username, roles, active, password } = req.body;
 
-	// return res
-	// 	.status(400)
-	// 	.json({ message: `${id} ${username} ${roles} ${active} ${password}` });
-
-	// Confirm data
-	if (
-		!id ||
-		!username ||
-		!Array.isArray(roles) ||
-		!roles.length ||
-		typeof active !== "boolean"
-	) {
-		return res.status(400).json({ message: "All fields are required!" });
+	if (!username) {
+		return res
+			.status(400)
+			.json({ message: "Bad Request: Username is required." });
+	} else if (!Array.isArray(roles) || !roles.length) {
+		return res.status(400).json({
+			message: "Bad Request: Role(s) is required or Role(s) is invalid.",
+		});
+	} else if (typeof active !== "boolean") {
+		return res.status(400).json({
+			message: "Bad Request: User status is invalid.",
+		});
 	}
 
-	// exec -> if passing value
-	const user = await Users.findById(id).exec();
+	const user = await Users.findById(id).exec(); // exec() is used when passing arguments
 
 	if (!user) {
-		return res.status(400).json({ message: "User not found!" });
+		return res
+			.status(400)
+			.json({ message: "Bad Request: User is not found." });
 	}
 
 	const duplicate = await Users.findOne({ username }).lean().exec();
-	// return res.status(400).json({ message: "TEST" });
 
 	if (duplicate && duplicate?._id.toString() !== id) {
-		return res.status(409).json({ message: "Duplicate username" });
+		return res.status(409).json({
+			message: "Conflict: User '${username}' has already existed.",
+		});
 	}
 
 	user.username = username;
@@ -97,30 +98,29 @@ const updateUser = asyncHandler(async (req, res) => {
 
 	const updateUser = await user.save();
 
-	res.json({ message: `${updateUser.username} updated!` });
+	res.status(200).json({
+		message: `OK: User ${updateUser.username} is updated.`,
+	});
 });
 
-// @desc Delete a user
-// @route DELETE /users
-// @access Private
 const deleteUser = asyncHandler(async (req, res) => {
 	const { id } = req.body;
 
 	if (!id) {
-		return res.status(400).json({ message: "User ID required" });
+		return res
+			.status(400)
+			.json({ message: "Bad Request: User ID is required." });
 	}
 
 	const user = await Users.findById(id).exec();
-
 	if (!user) {
-		return res.status(400).json({ message: "User not found" });
+		return res
+			.status(400)
+			.json({ message: "Bad Request: User is not found." });
 	}
 
-	const result = await user.deleteOne();
-
-	const reply = `Username ${user.username} with ID ${user._id} deleted`;
-
-	res.json(reply);
+	await user.deleteOne();
+	res.status(200).json({ message: `User '${user.username} is deleted.'` });
 });
 
 module.exports = {

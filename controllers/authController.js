@@ -6,20 +6,26 @@ const asyncHandler = require("express-async-handler");
 const login = asyncHandler(async (req, res) => {
 	const { username, password } = req.body;
 
-	if (!username || !password) {
-		return res.status(400).json({ message: "All fields are required" });
+	if (!username) {
+		return res.status(400).json({ message: "Nama Pengguna diperlukan" });
+	} else if (!password) {
+		return res.status(400).json({ message: "Kata Sandi diperlukan" });
 	}
 
 	const foundUser = await User.findOne({ username }).exec();
 
 	if (!foundUser || !foundUser.active) {
-		return res.status(401).json({ message: "Unauthorized" });
+		return res
+			.status(401)
+			.json({ message: "Nama Pengguna atau Kata Sandi tidak benar" });
 	}
 
 	const match = await bcrypt.compare(password, foundUser.password);
 
 	if (!match) {
-		return res.status(401).json({ message: "Unauthorized" });
+		return res
+			.status(401)
+			.json({ message: "Nama Pengguna atau Kata Sandi tidak benar" });
 	}
 
 	const accessToken = jwt.sign(
