@@ -12,7 +12,6 @@ const saleSchema = new mongoose.Schema(
 		cashier: {
 			type: String,
 			required: true,
-			ref: "User",
 		},
 		status: {
 			type: String,
@@ -21,6 +20,10 @@ const saleSchema = new mongoose.Schema(
 		type: {
 			type: String,
 			required: true,
+		},
+		payment: {
+			type: String,
+			require: true,
 		},
 		items: [
 			{

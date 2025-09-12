@@ -27,6 +27,7 @@ app.use("/", require("./routes/root"));
 app.use("/auth", require("./routes/authRoutes"));
 app.use("/users", require("./routes/usersRoutes"));
 app.use("/items", require("./routes/itemsRoutes"));
+app.use("/categories", require("./routes/categoriesRoutes"));
 app.use("/sales", require("./routes/salesRoutes"));
 
 app.all("/*splat", (req, res) => {

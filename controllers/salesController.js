@@ -11,104 +11,136 @@ const getSale = asyncHandler(async (req, res) => {
 	const { id } = req.params;
 
 	if (!id) {
-		return res.status(400).json({ message: "Sale ID is required." });
+		return res.status(400).json({ message: "ID Pesanan diperlukan" });
 	}
 
 	const sale = await Sale.findById(id).exec();
 
 	if (!sale) {
-		return res.status(400).json({ message: "Sale not found" });
+		return res.status(400).json({ message: "Pesanan tidak ditemukan" });
 	}
 
 	res.json(sale);
 });
 
 const createSale = asyncHandler(async (req, res) => {
-	const { number, tableNumber, items, cashierId, status, date, type } =
+	const { number, tableNumber, cashier, status, type, payment, items, date } =
 		req.body;
 
-	if (
-		!number ||
-		!tableNumber ||
-		!Array.isArray(items) ||
-		!items.length ||
-		!cashierId ||
-		!status ||
-		!date ||
-		!type
-	) {
-		return res.status(400).json({ message: "All fields are required." });
+	if (!number) {
+		return res.status(400).json({ message: "Nomor Nota diperlukan" });
+	} else if (!tableNumber) {
+		return res.status(400).json({ message: "Nomor Meja diperlukan" });
+	} else if (!cashier) {
+		return res.status(400).json({ message: "Nama Kasih diperlukan" });
+	} else if (!status) {
+		return res.status(400).json({ message: "Status Pesanan diperlukan" });
+	} else if (!type) {
+		return res
+			.status(400)
+			.json({ message: "Tipe pesanan (online/offline) diperlukan" });
+	} else if (status === "finished" && !payment) {
+		return res
+			.status(400)
+			.json({ message: "Metode Pembayaran diperlukan" });
+	} else if (!items || !items?.length) {
+		return res.status(400).json({ message: "Pesanan tidak boleh kosong" });
+	} else if (!date) {
+		return res.status(400).json({ message: "Waktu Pesanan diperlukan" });
 	}
 
 	const saleObject = {
 		number,
 		tableNumber,
-		cashierId,
+		cashier,
 		status,
-		date,
 		type,
+		payment,
 		items,
+		date,
 	};
 	const newSale = await Sale.create(saleObject);
 
 	if (newSale) {
-		res.status(201).json({ message: "New sale is successfully created." });
+		res.status(201).json({
+			message: `Pesanan nomor ${number} berhasil dibuat`,
+		});
 	} else {
 		res.status(400).json({
-			message: "Fail to create sale.",
+			message: "Pesanan gagal dibuat",
 		});
 	}
 });
 
 const updateSale = asyncHandler(async (req, res) => {
-	const { id, number, tableNumber, items, cashierId, status, date, type } =
-		req.body;
+	const {
+		id,
+		number,
+		tableNumber,
+		cashier,
+		status,
+		type,
+		payment,
+		items,
+		date,
+	} = req.body;
 
-	if (
-		!id ||
-		!number ||
-		!tableNumber ||
-		!Array.isArray(items) ||
-		!items.length ||
-		!cashierId ||
-		!status ||
-		!date ||
-		!type
-	) {
-		return res.status(400).json({ message: "All fields are required." });
+	if (!number) {
+		return res.status(400).json({ message: "Nomor Nota diperlukan" });
+	} else if (!tableNumber) {
+		return res.status(400).json({ message: "Nomor Meja diperlukan" });
+	} else if (!cashier) {
+		return res.status(400).json({ message: "Nama Kasih diperlukan" });
+	} else if (!status) {
+		return res.status(400).json({ message: "Status Pesanan diperlukan" });
+	} else if (!type) {
+		return res
+			.status(400)
+			.json({ message: "Tipe pesanan (online/offline) diperlukan" });
+	} else if (status === "finished" && !payment) {
+		return res
+			.status(400)
+			.json({ message: "Metode Pembayaran diperlukan" });
+	} else if (!items) {
+		return res.status(400).json({ message: "Item Pesanan diperlukan" });
+	} else if (!date) {
+		return res.status(400).json({ message: "Waktu Pesanan diperlukan" });
 	}
 
 	const sale = await Sale.findById(id).exec();
 
 	if (!sale) {
-		return res.status(400).json({ message: "Sale not found" });
+		return res.status(400).json({ message: "Pesanan tidak ditemukan" });
 	}
 
-	sale.items = items;
-	sale.status = status;
+	sale.number = number;
 	sale.tableNumber = tableNumber;
+	sale.cashier = cashier;
+	sale.status = status;
 	sale.type = type;
+	sale.payment = payment;
+	sale.items = items;
 
 	const updatedSale = await sale.save();
 
-	res.json({ message: `Sale number ${number} is updated!` });
+	res.json({ message: `Pesanan nomor ${number} berhasil diperbarui` });
 });
 
 const deleteSale = asyncHandler(async (req, res) => {
 	const { id } = req.body;
 
 	if (!id) {
-		return res.status(400).json({ message: "Sale ID is required." });
+		return res.status(400).json({ message: "ID Pesanan diperlukan" });
 	}
 
 	const sale = await Sale.findById(id).exec();
 
 	if (!sale) {
-		return res.status(400).json({ message: "Sale not found" });
+		return res.status(400).json({ message: "Pesanan tidak ditemukan" });
 	}
 
 	const result = await sale.deleteOne();
-	res.json({ message: `Sale number ${sale.number} is deleted.` });
+	res.json({ message: `Pesanan nomor ${sale.number} berhasil dihapus` });
 });
 
 module.exports = {

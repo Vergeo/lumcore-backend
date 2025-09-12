@@ -59,7 +59,14 @@ const refresh = asyncHandler(async (req, res) => {
 		refreshToken,
 		process.env.REFRESH_TOKEN_SECRET,
 		asyncHandler(async (err, decoded) => {
-			if (err) res.status(403).json({ message: "Forbidden" });
+			if (err)
+				return res.status(403).json({
+					message: "Forbidden: Refresh Token Expired",
+				});
+
+			if (!decoded) {
+				return res.status(400);
+			}
 
 			const foundUser = await User.findOne({
 				username: decoded.username,

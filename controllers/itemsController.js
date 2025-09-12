@@ -28,7 +28,7 @@ const getItem = asyncHandler(async (req, res) => {
 });
 
 const createItem = asyncHandler(async (req, res) => {
-	const { name, price, category } = req.body;
+	const { name, price, category, image } = req.body;
 
 	if (!name || !price || !category) {
 		return res.status(400).json({ message: "All fields are required." });
@@ -42,7 +42,7 @@ const createItem = asyncHandler(async (req, res) => {
 			.json({ message: `Item ${name} has already existed.` });
 	}
 
-	const itemObject = { name, price, category };
+	const itemObject = { name, price, category, image };
 	const newItem = await Item.create(itemObject);
 
 	if (newItem) {
@@ -57,7 +57,7 @@ const createItem = asyncHandler(async (req, res) => {
 });
 
 const updateItem = asyncHandler(async (req, res) => {
-	const { id, name, price, category} = req.body;
+	const { id, name, price, category, image } = req.body;
 
 	if (!id || !name || !price || !category) {
 		return res.status(400).json({ message: "All fields are required." });
@@ -80,6 +80,7 @@ const updateItem = asyncHandler(async (req, res) => {
 	item.name = name;
 	item.price = price;
 	item.category = category;
+	item.image = image;
 
 	const updatedItem = await item.save();
 	res.json({ message: `Item ${updatedItem.name} is successfully updated.` });

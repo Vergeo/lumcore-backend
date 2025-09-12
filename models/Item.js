@@ -14,6 +14,9 @@ const itemSchema = new mongoose.Schema(
 			type: String,
 			require: true,
 		},
+		image: {
+			type: String,
+		},
 	},
 	{ timestamps: true }
 );
