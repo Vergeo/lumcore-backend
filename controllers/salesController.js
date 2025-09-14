@@ -85,7 +85,9 @@ const updateSale = asyncHandler(async (req, res) => {
 		date,
 	} = req.body;
 
-	if (!number) {
+	if (!id) {
+		return res.status(400).json({ message: "ID Nota diperlukan" });
+	} else if (!number) {
 		return res.status(400).json({ message: "Nomor Nota diperlukan" });
 	} else if (!tableNumber) {
 		return res.status(400).json({ message: "Nomor Meja diperlukan" });
