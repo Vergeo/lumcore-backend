@@ -49,6 +49,14 @@ const createSale = asyncHandler(async (req, res) => {
 		return res.status(400).json({ message: "Waktu Pesanan diperlukan" });
 	}
 
+	const duplicate = await Sale.findOne({ number }).lean().exec(); // exec() is used when passing arguments
+
+	if (duplicate) {
+		return res.status(409).json({
+			message: `Nomor Nota ${number} sudah ada`,
+		});
+	}
+
 	const saleObject = {
 		number,
 		tableNumber,
