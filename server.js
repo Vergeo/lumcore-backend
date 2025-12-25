@@ -30,6 +30,17 @@ app.use("/items", require("./routes/itemsRoutes"));
 app.use("/categories", require("./routes/categoriesRoutes"));
 app.use("/sales", require("./routes/salesRoutes"));
 
+app.use("/employee", require("./routes/employeeRoutes"));
+app.use("/menuCategory", require("./routes/menuCategoryRoutes"));
+app.use("/menu", require("./routes/menuRoutes"));
+app.use("/order", require("./routes/orderRoutes"));
+app.use("/role", require("./routes/roleRoutes"));
+app.use("/stock", require("./routes/stockRoutes"));
+app.use("/stockCategory", require("./routes/stockCategoryRoutes"));
+app.use("/stockMovement", require("./routes/stockMovementRoutes"));
+app.use("/recipe", require("./routes/recipeRoutes"));
+app.use("/stockSnapshot", require("./routes/stockSnapshotRoutes"));
+
 app.all("/*splat", (req, res) => {
 	res.status(404);
 	if (req.accepts("html")) {
