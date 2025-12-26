@@ -54,7 +54,6 @@ const orderSchema = new mongoose.Schema(
 				},
 				recipeId: {
 					type: mongoose.Schema.Types.ObjectId,
-					required: true,
 					ref: "Recipe",
 				},
 			},

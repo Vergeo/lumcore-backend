@@ -123,7 +123,7 @@ const createStockMovement = asyncHandler(async (req, res) => {
 	}
 
 	var order, employee;
-	if (movementType === "Order") {
+	if (movementType === "Order" || movementType === "Cancel Order") {
 		order = Order.findById(orderId).exec();
 		if (!order) {
 			return res.status(400).json({ message: "Id pesanan tidak valid" });
@@ -139,6 +139,7 @@ const createStockMovement = asyncHandler(async (req, res) => {
 	}
 
 	var newComment = `Stok "${stock.stockName}"`;
+	// return res.status(400).json(order);
 	if (stockQuantityChange > 0)
 		newComment += `bertambah ${-stockQuantityChange}${
 			stock.stockUnit
@@ -244,7 +245,7 @@ const updateStockMovement = asyncHandler(async (req, res) => {
 		return res.status(400).json({ message: "Id stok tidak valid" });
 	}
 
-	if (movementType === "Order") {
+	if (movementType === "Order" || movementType === "Cancel Order") {
 		order = Order.findById(orderId).exec();
 		if (!order) {
 			return res.status(400).json({ message: "Id pesanan tidak valid" });
