@@ -14,7 +14,7 @@ const generateAccessToken = (employee) => {
 			roles: employee.employeeRoles.map((r) => r.roleName),
 		},
 		process.env.ACCESS_TOKEN_SECRET,
-		{ expiresIn: "15m" }
+		{ expiresIn: "1d" }
 	);
 };
 
@@ -52,7 +52,7 @@ const login = asyncHandler(async (req, res) => {
 	const refreshToken = jwt.sign(
 		{ username: foundEmployee.username },
 		process.env.REFRESH_TOKEN_SECRET,
-		{ expiresIn: "1h" }
+		{ expiresIn: "1d" }
 	);
 
 	res.cookie("jwt", refreshToken, {
